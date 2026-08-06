@@ -1,0 +1,14 @@
+shipment_id,is_exception,expected_resolution,expected_tone,should_escalate,ground_truth_reasoning
+SHP-001,NO,N/A,N/A,N/A,Routine successful delivery with signature confirmation; no anomaly indicators present.
+SHP-002,YES,RESCHEDULE,FORMAL,YES,VIP customer with 5 exceptions in the last 90 days triggers automatic escalation per playbook Page 1; second failed attempt due to no one home warrants a reschedule offer.
+SHP-002,YES,RESCHEDULE,FORMAL,YES,VIP customer with 5 exceptions in the last 90 days triggers automatic escalation per playbook Page 1; second failed attempt due to no one home warrants a reschedule offer.
+SHP-002,YES,RESCHEDULE,FORMAL,YES,VIP customer with 5 exceptions in the last 90 days triggers automatic escalation per playbook Page 1; second failed attempt due to no one home warrants a reschedule offer.
+SHP-003,YES,RESCHEDULE,CASUAL,NO,Standard customer; an address issue is resolvable by rescheduling and confirming the address with the customer per playbook Page 2. Does not meet any automatic or discretionary escalation trigger.
+SHP-004,YES,REPLACE,FORMAL,YES,Damaged fragile package for a VIP customer with 4 exceptions in the last 90 days triggers automatic escalation; playbook Page 3 requires replacement for damaged fragile goods.
+SHP-005,YES,REROUTE_TO_LOCKER,CASUAL,YES,Third failed delivery attempt automatically triggers escalation per playbook Page 1 regardless of tier; an eligible locker exists nearby and should be used per Page 2 locker rerouting policy before resorting to return-to-sender.
+SHP-006,YES,RETURN_TO_SENDER,CASUAL,NO,"Customer refused delivery; standard return-to-sender process applies per playbook Page 4, no escalation triggers are met."
+SHP-007,YES,REPLACE,FORMAL,YES,Perishable package with a weather delay exceeding the 4-hour threshold automatically triggers escalation and replacement per playbook Page 5; VIP tier warrants formal tone and a goodwill credit.
+SHP-007,YES,REPLACE,FORMAL,YES,Perishable package with a weather delay exceeding the 4-hour threshold automatically triggers escalation and replacement per playbook Page 5; VIP tier warrants formal tone and a goodwill credit.
+SHP-008,YES,RESCHEDULE,CASUAL,YES,Standard customer with 6 exceptions in the last 90 days exceeds the discretionary escalation threshold of 5 per playbook Page 1; the failed attempt itself otherwise warrants a straightforward reschedule.
+SHP-009,YES,REPLACE,FORMAL,YES,"Damaged perishable package automatically triggers escalation per playbook Page 3 and Page 5; replacement is required given spoilage risk, PREMIUM tier warrants formal tone."
+SHP-010,NO,N/A,N/A,N/A,Routine in-transit scan at distribution hub with no anomaly indicators; classified as noise.

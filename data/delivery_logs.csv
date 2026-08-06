@@ -1,0 +1,14 @@
+shipment_id,timestamp,status_code,status_description,customer_id,delivery_address,package_type,package_size,attempt_number,is_duplicate_scan
+SHP-001,2026-06-01T09:14:00,DELIVERED,"Package delivered successfully to front door, customer signed as Jennifer L.",CUST-001,"12 Willow St, 10001",STANDARD,SMALL,1,False
+SHP-002,2026-06-02T10:05:00,ATTEMPTED,No one answered the door on first attempt.,CUST-002,"45 Park Ave, 10002",STANDARD,MEDIUM,1,False
+SHP-002,2026-06-02T10:06:00,ATTEMPTED,No one answered the door on first attempt.,CUST-002,"45 Park Ave, 10002",STANDARD,MEDIUM,1,True
+SHP-002,2026-06-03T11:20:00,ATTEMPTED,No one home during second attempt as well.,CUST-002,"45 Park Ave, 10002",STANDARD,MEDIUM,2,False
+SHP-003,2026-06-04T14:32:00,ADDRESS_ISSUE,"Could not locate building 999 on Oakwood Street, no building number visible.",CUST-003,"999 Oakwood St, 10003",STANDARD,SMALL,1,False
+SHP-004,2026-06-05T08:47:00,DAMAGED,"Package arrived with visible dent on one side, fragile sticker present.",CUST-004,"78 Birch Rd, 10001",FRAGILE,MEDIUM,1,False
+SHP-005,2026-06-06T16:10:00,ATTEMPTED,"Third delivery attempt failed, no buzzer at building entrance, customer unreachable.",CUST-005,"22 Elm St, 10001",STANDARD,SMALL,3,False
+SHP-006,2026-06-07T13:00:00,REFUSED,"Customer refused package at door, stated they did not order this item.",CUST-006,"5 Maple Dr, 10004",STANDARD,MEDIUM,1,False
+SHP-007,2026-06-08T07:30:00,WEATHER_DELAY,"Delayed due to heavy snowstorm, estimated 5 hour hold at regional hub.",CUST-007,"150 Sunset Blvd, 10005",PERISHABLE,MEDIUM,1,False
+SHP-007,2026-06-08T07:31:00,WEATHER_DELAY,"Delayed due to heavy snowstorm, estimated 5 hour hold at regional hub.",CUST-007,"150 Sunset Blvd, 10005",PERISHABLE,MEDIUM,1,True
+SHP-008,2026-06-09T12:15:00,ATTEMPTED,"Delivery attempted, customer not home.",CUST-008,"88 Cedar Ln, 10002",STANDARD,SMALL,1,False
+SHP-009,2026-06-10T09:50:00,DAMAGED,"Perishable package damaged in transit, visible leakage and strong odor detected.",CUST-009,"33 Pine St, 10003",PERISHABLE,SMALL,1,False
+SHP-010,2026-06-11T06:00:00,SCANNED,"Routine scan at regional distribution hub, package in transit.",CUST-010,"10 River Rd, 10001",STANDARD,SMALL,0,False
