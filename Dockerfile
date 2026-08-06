@@ -17,7 +17,13 @@ WORKDIR /home/appuser/app
 
 # Copy the requirements file and install dependencies
 COPY requirements.txt .
-RUN pip install --upgrade pip && pip install -r requirements.txt
+# Install CPU-only torch first (from the dedicated PyTorch CPU wheel index) so that
+# sentence-transformers' torch requirement is satisfied without pulling in the
+# CUDA/GPU wheels (nvidia-*, cuda-toolkit, triton, etc.) that the default PyPI
+# linux wheel depends on. This Space runs on CPU-only hardware.
+RUN pip install --upgrade pip \
+    && pip install --no-cache-dir torch --index-url https://download.pytorch.org/whl/cpu \
+    && pip install --no-cache-dir -r requirements.txt
 
 # Switch to non-root user
 USER appuser
