@@ -27,11 +27,11 @@ Retrieval-augmented generation over an internal exception-resolution playbook (P
 
 ## Running the app
 
-`app.py` is a Streamlit app that runs the live pipeline (the same code deployed to the Hugging Face Space above). It reads `OPENAI_API_KEY` from the environment:
+`app.py` is a Streamlit app that runs the live pipeline (the same code deployed to the Hugging Face Space above). It calls a model through [Hugging Face Inference Providers](https://huggingface.co/docs/inference-providers/en/index) and reads `HF_TOKEN` (a Hugging Face User Access Token) from the environment:
 
 ```
 pip install -r requirements.txt
-export OPENAI_API_KEY=sk-...
+export HF_TOKEN=hf_...
 streamlit run app.py
 ```
 
@@ -39,8 +39,7 @@ streamlit run app.py
 
 ## Tech stack
 
-LangGraph, LangChain, OpenAI (gpt-4o-mini), ChromaDB, HuggingFace sentence-transformers embeddings, Streamlit, pandas, SQLite.
-
+LangGraph, LangChain, Hugging Face Inference Providers (Llama 3.3 70B Instruct), ChromaDB, HuggingFace sentence-transformers embeddings, Streamlit, pandas, SQLite.
 ## Data
 
 All data (customer records, delivery logs, locker inventory, ground-truth labels, and the operations playbook) is synthetic, generated for this project.
