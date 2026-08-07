@@ -10,7 +10,10 @@ auditable decision trail.
 All data (customers, lockers, delivery logs, ground truth, and the operations
 playbook) is synthetic, generated for this project.
 
-Requires OPENAI_API_KEY as a Space secret (Settings -> Variables and secrets).
+Requires HF_TOKEN as a Space secret (Settings -> Variables and secrets), a
+Hugging Face access token used to authenticate against Hugging Face Inference
+Providers (https://router.huggingface.co/v1), which routes chat completion
+requests to a hosted open-weight model.
 """
 import csv
 import json
@@ -68,19 +71,46 @@ def traceable(*args, **kwargs):
     return decorator
 
 
-# ─── OPENAI / LLM SETUP (reads OPENAI_API_KEY from HF Space secrets) ──────────
+# ─── LLM SETUP (Hugging Face Inference Providers, reads HF_TOKEN from Space
+# secrets) ──────────────────────────────────────────────────────────────────
+HF_ROUTER_BASE_URL = "https://router.huggingface.co/v1"
+HF_CHAT_MODEL = "meta-llama/Llama-3.3-70B-Instruct"
+
+
 @st.cache_resource
 def get_llms():
     """
     Build the LangChain chat models used by the agents.
-    Set OPENAI_API_KEY in your Hugging Face Space secrets (Settings -> Variables
-    and secrets) or in .streamlit/secrets.toml locally. HF Space secrets are
-    injected as container environment variables, which ChatOpenAI reads
-    automatically.
+
+    Runs against Hugging Face Inference Providers' OpenAI-compatible endpoint
+    (https://router.huggingface.co/v1) rather than OpenAI directly, so every
+    Hugging Face account (including free ones) gets a small monthly credit
+    pool automatically - no separate billing signup required. Set HF_TOKEN in
+    your Hugging Face Space secrets (Settings -> Variables and secrets) to a
+    User Access Token from https://huggingface.co/settings/tokens.
     """
     from langchain_openai import ChatOpenAI
-    gen = ChatOpenAI(model="gpt-4o-mini", temperature=0)
-    ev = ChatOpenAI(model="gpt-4o-mini", temperature=0)
+    hf_token = os.environ.get("HF_TOKEN")
+    if not hf_token:
+        st.error(
+            "No HF_TOKEN found in this Space's environment. Add a Hugging Face "
+            "User Access Token under **Settings → Variables and secrets** "
+            "(name it `HF_TOKEN`) to run the live pipeline.",
+            icon="⚠️",
+        )
+        st.stop()
+    gen = ChatOpenAI(
+        model=HF_CHAT_MODEL,
+        temperature=0,
+        api_key=hf_token,
+        base_url=HF_ROUTER_BASE_URL,
+    )
+    ev = ChatOpenAI(
+        model=HF_CHAT_MODEL,
+        temperature=0,
+        api_key=hf_token,
+        base_url=HF_ROUTER_BASE_URL,
+    )
     return gen, ev
 
 
@@ -1170,8 +1200,9 @@ with st.sidebar:
     st.write(
         "This is a **live** run of the actual multi-agent pipeline: a deterministic "
         "preprocessor and rule engine, a Resolution Agent, a Communication Agent, and "
-        "two Critic agents, all orchestrated with LangGraph and backed by an OpenAI "
-        "model making real-time decisions."
+        "two Critic agents, all orchestrated with LangGraph and backed by an open-"
+        "weight model served via Hugging Face Inference Providers, making real-time "
+        "decisions."
     )
     st.write(
         "Pick one of the 10 curated shipment scenarios below and run the pipeline to "
@@ -1210,16 +1241,17 @@ with st.expander("View raw delivery log rows for this shipment"):
 
 run_clicked = st.button("▶ Run Pipeline", type="primary")
 
-if not os.environ.get("OPENAI_API_KEY"):
+if not os.environ.get("HF_TOKEN"):
     st.warning(
-        "No OPENAI_API_KEY found in this Space's environment. Add it under "
-        "**Settings → Variables and secrets** to run the live pipeline.",
+        "No HF_TOKEN found in this Space's environment. Add a Hugging Face User "
+        "Access Token under **Settings → Variables and secrets** to run the live "
+        "pipeline.",
         icon="⚠️",
     )
 
 if run_clicked:
-    if not os.environ.get("OPENAI_API_KEY"):
-        st.error("Cannot run the pipeline without an OPENAI_API_KEY secret configured on this Space.")
+    if not os.environ.get("HF_TOKEN"):
+        st.error("Cannot run the pipeline without an HF_TOKEN secret configured on this Space.")
     else:
         with st.spinner(f"Running the live multi-agent pipeline for {selected}..."):
             try:
