@@ -50,8 +50,8 @@ st.markdown("""
 }
 .badge-escalated { background:#c62828; color:white; padding:4px 12px; border-radius:20px; font-weight:bold; font-size:.85em; }
 .badge-clear     { background:#2e7d32; color:white; padding:4px 12px; border-radius:20px; font-weight:bold; font-size:.85em; }
-.trace-box { background:#f5f5f5; border-left:4px solid #2e7d32; padding:10px 15px; border-radius:4px; margin:6px 0; font-family:monospace; font-size:.85em; }
-.message-box { background:#e8f5e9; border-left:4px solid #1b5e20; padding:14px 18px; border-radius:6px; margin:10px 0; }
+.trace-box { background:#f5f5f5; color:#1a1a1a; border-left:4px solid #2e7d32; padding:10px 15px; border-radius:4px; margin:6px 0; font-family:monospace; font-size:.85em; }
+.message-box { background:#e8f5e9; color:#1a1a1a; border-left:4px solid #1b5e20; padding:14px 18px; border-radius:6px; margin:10px 0; }
 div[data-testid="stJson"] { background-color: #1e1e1e !important; }
 div[data-testid="stJson"] * { color: #f1f1f1 !important; }
 div[data-testid="stDataFrame"] { background-color: #1e1e1e !important; }
