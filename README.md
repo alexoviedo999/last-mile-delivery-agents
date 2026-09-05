@@ -37,6 +37,8 @@ streamlit run app.py
 
 `Project_3_Full_code_Notebook.ipynb` is the original research notebook: data exploration, agent design, and the 10-scenario evaluation (task completion, escalation accuracy, tool call accuracy, reasoning coherence, latency).
 
+The Streamlit UI scores one shipment with gold equality (task complete, escalation match). It does not import DeepEval. For a CI job to score the **ordered LangGraph trajectory** (nodes, LLM calls, tools), set `DEEPEVAL_TRACE=1` and pass DeepEval's `CallbackHandler` on `invoke` — `run_pipeline` does this automatically when that env var is set. Do not add `deepeval` to `requirements.txt`; operator clicks leave the flag unset. See [DeepEval LangGraph](https://deepeval.com/integrations/frameworks/langgraph).
+
 ## Tech stack
 
 LangGraph, LangChain, Hugging Face Inference Providers (Llama 3.3 70B Instruct), ChromaDB, HuggingFace sentence-transformers embeddings, Streamlit, pandas, SQLite.
