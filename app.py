@@ -1149,6 +1149,30 @@ def compute_escalation_accuracy(gt: dict, pred: dict):
     return gt.get("should_escalate") == pred_escalated
 
 
+# ─── DEEPEVAL CI TRACE ────────────────────────────────────────────────────────
+# Streamlit clicks leave DEEPEVAL_TRACE unset. CI sets it so CallbackHandler
+# records the LangGraph trajectory. deepeval is not in Space requirements.txt.
+
+
+def _deepeval_invoke_config():
+    flag = os.environ.get("DEEPEVAL_TRACE", "").strip().lower()
+    if flag not in {"1", "true", "yes", "on"}:
+        return None
+    try:
+        from deepeval.integrations.langchain import CallbackHandler
+    except ImportError:
+        return None
+    return {
+        "callbacks": [
+            CallbackHandler(
+                name="last-mile",
+                tags=["ci", "trajectory"],
+                metadata={"graph": "last_mile_app"},
+            )
+        ]
+    }
+
+
 def run_pipeline(shipment_id: str) -> dict:
     """Execute the live pipeline for a single shipment scenario."""
     rows = shipment_groups[shipment_id]
@@ -1181,7 +1205,12 @@ def run_pipeline(shipment_id: str) -> dict:
         "guardrail_triggered": False
     }
 
-    result = last_mile_app.invoke(initial_state)
+    config = _deepeval_invoke_config()
+    result = (
+        last_mile_app.invoke(initial_state, config=config)
+        if config
+        else last_mile_app.invoke(initial_state)
+    )
     task = compute_task_completion(gt, result)
     esc_acc = compute_escalation_accuracy(gt, result)
     citations = sorted({f"Page {c['page']}" for c in result.get("playbook_context", [])})
