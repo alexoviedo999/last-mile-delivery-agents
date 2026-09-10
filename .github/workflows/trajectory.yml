@@ -1,0 +1,47 @@
+# Unit tests on every PR/push. Live DeepEval is opt-in (workflow_dispatch)
+# so a model key is not spent on every commit. Do not add deepeval to
+# requirements.txt — Space clicks stay gold-equality.
+name: last-mile trajectory
+on:
+  pull_request:
+  push:
+    branches: [main]
+    paths:
+      - "app.py"
+      - "ci/**"
+      - "data/ground_truth.csv"
+      - ".github/workflows/trajectory.yml"
+  workflow_dispatch:
+    inputs:
+      live:
+        description: "Run live DeepEval trajectory scoring (needs HF_TOKEN secret)"
+        type: boolean
+        default: false
+
+jobs:
+  unit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install pytest
+      - run: python -m pytest ci/test_deepeval_invoke.py ci/test_last_mile_trajectory.py -q
+
+  trajectory:
+    if: github.event_name == 'workflow_dispatch' && inputs.live
+    runs-on: ubuntu-latest
+    needs: unit
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install -r requirements.txt -r ci/requirements-ci.txt
+      - name: Score LangGraph trajectory
+        env:
+          DEEPEVAL_TRACE: "1"
+          DEEPEVAL_LIVE: "1"
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: deepeval test run ci/test_last_mile_trajectory.py
