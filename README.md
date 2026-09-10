@@ -41,6 +41,10 @@ The Streamlit UI scores one shipment with gold equality (task complete, escalati
 
 GitHub Actions (`.github/workflows/trajectory.yml`) runs unit tests on every PR. Live DeepEval is **Actions → last-mile trajectory → Run workflow** and needs an `HF_TOKEN` repo secret. See `ci/README.md`.
 
+DeepEval scores are shown on a **separate** Space (reader only, no `invoke`):
+https://huggingface.co/spaces/alexoviedo999/last-mile-deepeval-results
+The operator Space stays gold-equality.
+
 ## Tech stack
 
 LangGraph, LangChain, Hugging Face Inference Providers (Llama 3.3 70B Instruct), ChromaDB, HuggingFace sentence-transformers embeddings, Streamlit, pandas, SQLite.

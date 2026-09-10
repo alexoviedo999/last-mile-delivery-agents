@@ -1,0 +1,8 @@
+{
+  "schema": "last-mile-deepeval-v1",
+  "generated_at": null,
+  "source": "none",
+  "run_url": null,
+  "note": "No live DeepEval run yet. GitHub Actions → last-mile trajectory → live.",
+  "shipments": []
+}

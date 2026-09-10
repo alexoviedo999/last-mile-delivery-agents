@@ -33,4 +33,8 @@ deepeval test run ci/test_last_mile_trajectory.py
 Live import of `app.py` needs Streamlit, data next to the app, and a model key.
 Start with one shipment if you are debugging.
 
+A live run writes `evals/latest.json` and pushes it to the `evals` branch.
+The results Space reads that file; it does not invoke the graph:
+https://huggingface.co/spaces/alexoviedo999/last-mile-deepeval-results
+
 Docs: https://deepeval.com/integrations/frameworks/langgraph
