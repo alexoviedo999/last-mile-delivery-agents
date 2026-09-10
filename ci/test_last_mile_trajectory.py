@@ -1,0 +1,94 @@
+"""CI job: score the last-mile LangGraph trajectory with DeepEval.
+
+Gold equality (`compute_task_completion`, `compute_escalation_accuracy`) remains
+the ship gate in the Space UI. This file scores the *ordered run* — nodes, LLM
+calls, tools — via CallbackHandler on invoke.
+
+Default `pytest` skips the live graph. Set DEEPEVAL_LIVE=1 (and HF_TOKEN or
+OPENAI_API_KEY depending on the model) then:
+
+    DEEPEVAL_TRACE=1 deepeval test run ci/test_last_mile_trajectory.py
+
+See https://deepeval.com/integrations/frameworks/langgraph
+"""
+
+from __future__ import annotations
+
+import csv
+import os
+import sys
+from pathlib import Path
+
+import pytest
+
+CI = Path(__file__).resolve().parent
+sys.path.insert(0, str(CI))
+
+from deepeval_invoke import find_app_py, find_gold_csv, invoke_config, trace_enabled  # noqa: E402
+
+LIVE = os.environ.get("DEEPEVAL_LIVE", "").strip() == "1"
+
+
+def _gold_path() -> Path:
+    return find_gold_csv()
+
+
+def _last_yes_rows(path: Path) -> list[dict]:
+    """Notebook consolidation rule: last YES row per shipment_id wins."""
+    by_id: dict[str, dict] = {}
+    with path.open(encoding="utf-8", newline="") as fh:
+        for row in csv.DictReader(fh):
+            sid = row["shipment_id"]
+            if sid not in by_id or row.get("is_exception") == "YES":
+                by_id[sid] = row
+    return list(by_id.values())
+
+
+def test_gold_file_has_ten_shipments():
+    path = _gold_path()
+    assert path.exists(), path
+    rows = _last_yes_rows(path)
+    ids = [r["shipment_id"] for r in rows]
+    assert ids == [f"SHP-{n:03d}" for n in range(1, 11)]
+
+
+def test_ci_env_gate_is_off_by_default(monkeypatch):
+    monkeypatch.delenv("DEEPEVAL_TRACE", raising=False)
+    assert trace_enabled() is False
+    assert invoke_config(env={}, handler_factory=lambda: object()) is None
+
+
+def _live_goldens():
+    try:
+        return _last_yes_rows(_gold_path())
+    except FileNotFoundError:
+        return []
+
+
+@pytest.mark.skipif(not LIVE, reason="set DEEPEVAL_LIVE=1 to run LLM trajectory eval")
+@pytest.mark.parametrize("gold", _live_goldens())
+def test_last_mile_trajectory(gold):
+    pytest.importorskip("deepeval")
+    from deepeval import assert_test
+    from deepeval.dataset import Golden
+    from deepeval.metrics import TaskCompletionMetric
+
+    os.environ["DEEPEVAL_TRACE"] = "1"
+    sys.path.insert(0, str(find_app_py().parent))
+    try:
+        from app import run_pipeline  # type: ignore
+    except Exception as exc:
+        pytest.skip(f"cannot import last-mile app.py: {exc}")
+
+    golden = Golden(
+        input=gold["shipment_id"],
+        expected_output=gold.get("expected_resolution") or "",
+        additional_metadata={
+            "should_escalate": gold.get("should_escalate"),
+            "expected_tone": gold.get("expected_tone"),
+            "is_exception": gold.get("is_exception"),
+        },
+    )
+    assert invoke_config() is not None, "DEEPEVAL_TRACE must be set for trajectory scoring"
+    run_pipeline(gold["shipment_id"])
+    assert_test(golden=golden, metrics=[TaskCompletionMetric(threshold=0.5)])

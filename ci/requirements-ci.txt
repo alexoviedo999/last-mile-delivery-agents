@@ -1,0 +1,3 @@
+# CI extras. Do not copy these into the last-mile Space requirements.txt.
+pytest>=8.0
+deepeval>=3.0
