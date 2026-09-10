@@ -11,21 +11,24 @@ Do not add `deepeval` to `requirements.txt`. Operator clicks leave
 GitHub Actions runs this on pull requests and on `main`:
 
 ```bash
-python -m pytest ci/test_deepeval_invoke.py ci/test_last_mile_trajectory.py -q
+python -m pytest ci -q
 ```
 
 Checks: env gate, `_deepeval_invoke_config` on `invoke`, gold file has ten
-shipments, Space requirements stay free of deepeval.
+shipments, Space requirements stay free of deepeval, live metric uses `HfJudge`
+(HF router, not OpenAI), publish fetches `origin/evals` by refspec.
 
 ## Live DeepEval (LLM)
 
 Opt-in. In the repo: **Actions → last-mile trajectory → Run workflow → live**.
 Needs a GitHub secret named `HF_TOKEN` (Inference Providers; same as the Space).
+`TaskCompletionMetric` is constructed with `HfJudge` so it does not read
+`OPENAI_API_KEY`.
 
 Or locally:
 
 ```bash
-pip install -r ci/requirements-ci.txt
+pip install -r requirements.txt -r ci/requirements-ci.txt
 export DEEPEVAL_TRACE=1 DEEPEVAL_LIVE=1 HF_TOKEN=hf_...
 deepeval test run ci/test_last_mile_trajectory.py
 ```

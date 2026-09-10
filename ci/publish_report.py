@@ -49,10 +49,18 @@ def main() -> int:
 
     _run(["git", "config", "user.name", "github-actions[bot]"])
     _run(["git", "config", "user.email", "41898282+github-actions[bot]@users.noreply.github.com"])
-    fetch = _run(["git", "fetch", "origin", "evals"])
-    if fetch.returncode == 0:
-        _run(["git", "checkout", "-B", "evals", "origin/evals"])
+    # Shallow Actions checkouts do not create origin/evals from `git fetch origin evals`.
+    fetch = _run(
+        ["git", "fetch", "origin", "+refs/heads/evals:refs/remotes/origin/evals"]
+    )
+    has_remote = _run(["git", "rev-parse", "--verify", "origin/evals"]).returncode == 0
+    if has_remote:
+        co = _run(["git", "checkout", "-B", "evals", "origin/evals"])
+        if co.returncode != 0:
+            print("checkout origin/evals failed:", (co.stderr or "")[:400], file=sys.stderr)
+            return 1
     else:
+        print("no origin/evals yet; creating orphan evals branch")
         _run(["git", "checkout", "--orphan", "evals"])
         _run(["git", "reset"])
 
@@ -84,6 +92,16 @@ def main() -> int:
         text=True,
         capture_output=True,
     )
+    if push.returncode != 0 and "non-fast-forward" in (push.stderr or ""):
+        # evals is a generated report branch; rebase onto remote then retry.
+        _run(["git", "pull", "--rebase", remote, "evals"])
+        push = subprocess.run(
+            ["git", "push", remote, "HEAD:evals"],
+            cwd=ROOT,
+            check=False,
+            text=True,
+            capture_output=True,
+        )
     if push.returncode != 0:
         err = (push.stderr or "").replace(token, "***")
         print("push failed:", err[:500], file=sys.stderr)

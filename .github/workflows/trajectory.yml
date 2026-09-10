@@ -29,7 +29,7 @@ jobs:
         with:
           python-version: "3.11"
       - run: pip install pytest
-      - run: python -m pytest ci/test_deepeval_invoke.py ci/test_last_mile_trajectory.py ci/test_report.py -q
+      - run: python -m pytest ci -q
 
   trajectory:
     if: github.event_name == 'workflow_dispatch' && inputs.live
