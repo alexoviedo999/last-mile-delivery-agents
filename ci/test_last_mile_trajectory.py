@@ -86,8 +86,8 @@ def _persist_live_report():
 def test_last_mile_trajectory(gold):
     pytest.importorskip("deepeval")
     from deepeval import assert_test
-    from deepeval.dataset import Golden
     from deepeval.metrics import TaskCompletionMetric
+    from deepeval.test_case import LLMTestCase
 
     from judge_model import HfJudge
 
@@ -98,15 +98,6 @@ def test_last_mile_trajectory(gold):
     except Exception as exc:
         pytest.skip(f"cannot import last-mile app.py: {exc}")
 
-    golden = Golden(
-        input=gold["shipment_id"],
-        expected_output=gold.get("expected_resolution") or "",
-        additional_metadata={
-            "should_escalate": gold.get("should_escalate"),
-            "expected_tone": gold.get("expected_tone"),
-            "is_exception": gold.get("is_exception"),
-        },
-    )
     assert invoke_config() is not None, "DEEPEVAL_TRACE must be set for trajectory scoring"
     metric = TaskCompletionMetric(threshold=0.5, model=HfJudge())
     row = {
@@ -127,7 +118,17 @@ def test_last_mile_trajectory(gold):
         row["task_complete"] = tc.get("task_complete")
         row["escalation_correct"] = pred.get("escalation_correct")
         row["resolution"] = (pred.get("state") or {}).get("resolution_output", {}).get("resolution")
-        assert_test(golden=golden, metrics=[metric])
+        # Installed deepeval rejects golden=+metrics=. test_case=+metrics= is valid
+        # on 3.x and 4.x; CallbackHandler still records the LangGraph run.
+        assert_test(
+            test_case=LLMTestCase(
+                input=gold["shipment_id"],
+                actual_output=row["resolution"] or "",
+                expected_output=gold.get("expected_resolution") or "",
+            ),
+            metrics=[metric],
+            run_async=False,
+        )
         row["deepeval_score"] = getattr(metric, "score", None)
         row["deepeval_success"] = bool(getattr(metric, "success", False))
         row["deepeval_reason"] = (getattr(metric, "reason", None) or "")[:800]

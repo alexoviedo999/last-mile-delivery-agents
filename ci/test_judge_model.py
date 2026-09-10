@@ -24,3 +24,10 @@ def test_trajectory_metric_passes_hf_judge():
     assert wired in text
     leftover = text.replace(wired, "")
     assert "TaskCompletionMetric(" not in leftover
+
+
+def test_assert_test_uses_llm_test_case_not_golden_plus_metrics():
+    text = (CI / "test_last_mile_trajectory.py").read_text(encoding="utf-8")
+    assert "assert_test(golden=golden, metrics=" not in text
+    assert "LLMTestCase" in text
+    assert "test_case=" in text
