@@ -1,8 +1,131 @@
 {
   "schema": "last-mile-deepeval-v1",
-  "generated_at": null,
-  "source": "none",
-  "run_url": "https://github.com/alexoviedo999/last-mile-delivery-agents/actions/runs/34431396000",
-  "note": "No live DeepEval run yet. GitHub Actions \u2192 last-mile trajectory \u2192 live.",
-  "shipments": []
+  "generated_at": "2026-09-10T03:59:57Z",
+  "source": "github-actions",
+  "run_url": "https://github.com/alexoviedo999/last-mile-delivery-agents/actions/runs/34435190609",
+  "note": null,
+  "passed": 1,
+  "total": 10,
+  "shipments": [
+    {
+      "shipment_id": "SHP-001",
+      "expected_resolution": "N/A",
+      "passed": false,
+      "task_complete": true,
+      "escalation_correct": null,
+      "resolution": "N/A",
+      "deepeval_score": null,
+      "deepeval_success": null,
+      "deepeval_reason": null,
+      "error": "Metrics: Task Completion (score: 0.0, threshold: 0.5, strict: False, error: None, reason: No specific outcome can be determined due to lack of information about the tools called and their outputs, resulting in no achievement of the task.) failed."
+    },
+    {
+      "shipment_id": "SHP-002",
+      "expected_resolution": "RESCHEDULE",
+      "passed": false,
+      "task_complete": false,
+      "escalation_correct": true,
+      "resolution": "REROUTE_TO_LOCKER",
+      "deepeval_score": 1.0,
+      "deepeval_success": true,
+      "deepeval_reason": "The system provided a clear and direct course of action for package SHP-002 by responding with REROUTE_TO_LOCKER, perfectly achieving the desired task.",
+      "error": null
+    },
+    {
+      "shipment_id": "SHP-003",
+      "expected_resolution": "RESCHEDULE",
+      "passed": false,
+      "task_complete": false,
+      "escalation_correct": false,
+      "resolution": "REROUTE_TO_LOCKER",
+      "deepeval_score": 1.0,
+      "deepeval_success": true,
+      "deepeval_reason": "The system correctly determined the action for package SHP-003 as REROUTE_TO_LOCKER, perfectly achieving the desired task.",
+      "error": null
+    },
+    {
+      "shipment_id": "SHP-004",
+      "expected_resolution": "REPLACE",
+      "passed": false,
+      "task_complete": true,
+      "escalation_correct": true,
+      "resolution": "REPLACE",
+      "deepeval_score": null,
+      "deepeval_success": null,
+      "deepeval_reason": null,
+      "error": "Metrics: Task Completion (score: 0.2, threshold: 0.5, strict: False, error: None, reason: The system provided a response but lacked specific details about the tools used and the response itself, making it difficult to determine if the task was successfully completed.) failed."
+    },
+    {
+      "shipment_id": "SHP-005",
+      "expected_resolution": "REROUTE_TO_LOCKER",
+      "passed": true,
+      "task_complete": true,
+      "escalation_correct": true,
+      "resolution": "REROUTE_TO_LOCKER",
+      "deepeval_score": 1.0,
+      "deepeval_success": true,
+      "deepeval_reason": "The system correctly determined the action for package SHP-005 as REROUTE_TO_LOCKER, perfectly achieving the desired task.",
+      "error": null
+    },
+    {
+      "shipment_id": "SHP-006",
+      "expected_resolution": "RETURN_TO_SENDER",
+      "passed": false,
+      "task_complete": true,
+      "escalation_correct": true,
+      "resolution": "RETURN_TO_SENDER",
+      "deepeval_score": null,
+      "deepeval_success": null,
+      "deepeval_reason": null,
+      "error": "Metrics: Task Completion (score: 0.0, threshold: 0.5, strict: False, error: None, reason: The system returned RETURN_TO_SENDER, indicating that it was unable to process SHP-006 as expected.) failed."
+    },
+    {
+      "shipment_id": "SHP-007",
+      "expected_resolution": "REPLACE",
+      "passed": false,
+      "task_complete": true,
+      "escalation_correct": true,
+      "resolution": "REPLACE",
+      "deepeval_score": null,
+      "deepeval_success": null,
+      "deepeval_reason": null,
+      "error": "Metrics: Task Completion (score: 0.0, threshold: 0.5, strict: False, error: None, reason: No specific outcome can be determined due to lack of information about the tools called and their outputs, resulting in no achievement of the desired task.) failed."
+    },
+    {
+      "shipment_id": "SHP-008",
+      "expected_resolution": "RESCHEDULE",
+      "passed": false,
+      "task_complete": false,
+      "escalation_correct": true,
+      "resolution": "REROUTE_TO_LOCKER",
+      "deepeval_score": 1.0,
+      "deepeval_success": true,
+      "deepeval_reason": "The system successfully determined the action for package SHP-008, which is to reroute it to a locker, perfectly achieving the desired task.",
+      "error": null
+    },
+    {
+      "shipment_id": "SHP-009",
+      "expected_resolution": "REPLACE",
+      "passed": false,
+      "task_complete": true,
+      "escalation_correct": true,
+      "resolution": "REPLACE",
+      "deepeval_score": null,
+      "deepeval_success": null,
+      "deepeval_reason": null,
+      "error": "Metrics: Task Completion (score: 0.0, threshold: 0.5, strict: False, error: None, reason: No specific outcome can be determined due to lack of information about the task and its expected outcome for the given input SHP-009.) failed."
+    },
+    {
+      "shipment_id": "SHP-010",
+      "expected_resolution": "N/A",
+      "passed": false,
+      "task_complete": true,
+      "escalation_correct": null,
+      "resolution": "N/A",
+      "deepeval_score": null,
+      "deepeval_success": null,
+      "deepeval_reason": null,
+      "error": "Metrics: Task Completion (score: 0.0, threshold: 0.5, strict: False, error: None, reason: No specific details or outcomes were generated for SHP-010 as the response and tools called are not provided.) failed."
+    }
+  ]
 }
