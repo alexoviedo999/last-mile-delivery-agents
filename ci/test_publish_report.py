@@ -14,3 +14,5 @@ def test_publish_fetches_evals_into_origin_ref():
     assert "--verify" in text and "origin/evals" in text
     assert "non-fast-forward" in text
     assert "--rebase" in text
+    assert '"-f"' in text
+    assert "checkout" in text

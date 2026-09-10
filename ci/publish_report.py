@@ -55,13 +55,15 @@ def main() -> int:
     )
     has_remote = _run(["git", "rev-parse", "--verify", "origin/evals"]).returncode == 0
     if has_remote:
-        co = _run(["git", "checkout", "-B", "evals", "origin/evals"])
+        # Score step writes evals/latest.json on the checkout branch; that copy
+        # is already in `stash`. Force so dirty report files cannot block.
+        co = _run(["git", "checkout", "-f", "-B", "evals", "origin/evals"])
         if co.returncode != 0:
             print("checkout origin/evals failed:", (co.stderr or "")[:400], file=sys.stderr)
             return 1
     else:
         print("no origin/evals yet; creating orphan evals branch")
-        _run(["git", "checkout", "--orphan", "evals"])
+        _run(["git", "checkout", "-f", "--orphan", "evals"])
         _run(["git", "reset"])
 
     DEFAULT_PATH.parent.mkdir(parents=True, exist_ok=True)
