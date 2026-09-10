@@ -9,8 +9,10 @@ on:
     paths:
       - "app.py"
       - "ci/**"
+      - "evals/**"
       - "data/ground_truth.csv"
       - ".github/workflows/trajectory.yml"
+      - "spaces/deepeval-results/**"
   workflow_dispatch:
     inputs:
       live:
@@ -27,12 +29,14 @@ jobs:
         with:
           python-version: "3.11"
       - run: pip install pytest
-      - run: python -m pytest ci/test_deepeval_invoke.py ci/test_last_mile_trajectory.py -q
+      - run: python -m pytest ci/test_deepeval_invoke.py ci/test_last_mile_trajectory.py ci/test_report.py -q
 
   trajectory:
     if: github.event_name == 'workflow_dispatch' && inputs.live
     runs-on: ubuntu-latest
     needs: unit
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -44,4 +48,12 @@ jobs:
           DEEPEVAL_TRACE: "1"
           DEEPEVAL_LIVE: "1"
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          GITHUB_RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: deepeval test run ci/test_last_mile_trajectory.py
+        continue-on-error: true
+      - name: Publish report for the results Space
+        if: always()
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: python ci/publish_report.py

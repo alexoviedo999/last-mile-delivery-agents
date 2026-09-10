@@ -25,8 +25,10 @@ CI = Path(__file__).resolve().parent
 sys.path.insert(0, str(CI))
 
 from deepeval_invoke import find_app_py, find_gold_csv, invoke_config, trace_enabled  # noqa: E402
+from report import build_report, write_latest  # noqa: E402
 
 LIVE = os.environ.get("DEEPEVAL_LIVE", "").strip() == "1"
+_LIVE_ROWS: list[dict] = []
 
 
 def _gold_path() -> Path:
@@ -65,6 +67,20 @@ def _live_goldens():
         return []
 
 
+@pytest.fixture(scope="session", autouse=True)
+def _persist_live_report():
+    yield
+    if not LIVE or not _LIVE_ROWS:
+        return
+    write_latest(
+        build_report(
+            _LIVE_ROWS,
+            run_url=os.environ.get("GITHUB_RUN_URL"),
+            source="github-actions" if os.environ.get("GITHUB_ACTIONS") else "local",
+        )
+    )
+
+
 @pytest.mark.skipif(not LIVE, reason="set DEEPEVAL_LIVE=1 to run LLM trajectory eval")
 @pytest.mark.parametrize("gold", _live_goldens())
 def test_last_mile_trajectory(gold):
@@ -90,5 +106,32 @@ def test_last_mile_trajectory(gold):
         },
     )
     assert invoke_config() is not None, "DEEPEVAL_TRACE must be set for trajectory scoring"
-    run_pipeline(gold["shipment_id"])
-    assert_test(golden=golden, metrics=[TaskCompletionMetric(threshold=0.5)])
+    metric = TaskCompletionMetric(threshold=0.5)
+    row = {
+        "shipment_id": gold["shipment_id"],
+        "expected_resolution": gold.get("expected_resolution"),
+        "passed": False,
+        "task_complete": None,
+        "escalation_correct": None,
+        "resolution": None,
+        "deepeval_score": None,
+        "deepeval_success": None,
+        "deepeval_reason": None,
+        "error": None,
+    }
+    try:
+        pred = run_pipeline(gold["shipment_id"])
+        tc = pred.get("task_completion") or {}
+        row["task_complete"] = tc.get("task_complete")
+        row["escalation_correct"] = pred.get("escalation_correct")
+        row["resolution"] = (pred.get("state") or {}).get("resolution_output", {}).get("resolution")
+        assert_test(golden=golden, metrics=[metric])
+        row["deepeval_score"] = getattr(metric, "score", None)
+        row["deepeval_success"] = bool(getattr(metric, "success", False))
+        row["deepeval_reason"] = (getattr(metric, "reason", None) or "")[:800]
+        row["passed"] = bool(row["deepeval_success"]) and bool(row["task_complete"])
+    except Exception as exc:
+        row["error"] = str(exc)[:800]
+        raise
+    finally:
+        _LIVE_ROWS.append(row)
