@@ -1,0 +1,26 @@
+"""Unit tests for the HF DeepEval judge wiring. No LLM, no deepeval install."""
+
+from __future__ import annotations
+
+from pathlib import Path
+
+CI = Path(__file__).resolve().parent
+
+
+def test_judge_uses_hf_router_not_openai():
+    text = (CI / "judge_model.py").read_text(encoding="utf-8")
+    assert "class HfJudge" in text
+    assert "DeepEvalBaseLLM" in text
+    assert "router.huggingface.co/v1" in text
+    assert "HF_TOKEN" in text
+    assert "OPENAI_API_KEY" not in text
+    assert "schema" in text
+
+
+def test_trajectory_metric_passes_hf_judge():
+    text = (CI / "test_last_mile_trajectory.py").read_text(encoding="utf-8")
+    assert "from judge_model import HfJudge" in text
+    wired = "TaskCompletionMetric(threshold=0.5, model=HfJudge())"
+    assert wired in text
+    leftover = text.replace(wired, "")
+    assert "TaskCompletionMetric(" not in leftover

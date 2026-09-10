@@ -89,6 +89,8 @@ def test_last_mile_trajectory(gold):
     from deepeval.dataset import Golden
     from deepeval.metrics import TaskCompletionMetric
 
+    from judge_model import HfJudge
+
     os.environ["DEEPEVAL_TRACE"] = "1"
     sys.path.insert(0, str(find_app_py().parent))
     try:
@@ -106,7 +108,7 @@ def test_last_mile_trajectory(gold):
         },
     )
     assert invoke_config() is not None, "DEEPEVAL_TRACE must be set for trajectory scoring"
-    metric = TaskCompletionMetric(threshold=0.5)
+    metric = TaskCompletionMetric(threshold=0.5, model=HfJudge())
     row = {
         "shipment_id": gold["shipment_id"],
         "expected_resolution": gold.get("expected_resolution"),
