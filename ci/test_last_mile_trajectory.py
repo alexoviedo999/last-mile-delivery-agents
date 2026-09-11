@@ -25,6 +25,7 @@ CI = Path(__file__).resolve().parent
 sys.path.insert(0, str(CI))
 
 from deepeval_invoke import find_app_py, find_gold_csv, invoke_config, trace_enabled  # noqa: E402
+from eval_case import apply_metric_fields, judge_actual, judge_expected, judge_input  # noqa: E402
 from report import build_report, write_latest  # noqa: E402
 
 LIVE = os.environ.get("DEEPEVAL_LIVE", "").strip() == "1"
@@ -118,23 +119,23 @@ def test_last_mile_trajectory(gold):
         row["task_complete"] = tc.get("task_complete")
         row["escalation_correct"] = pred.get("escalation_correct")
         row["resolution"] = (pred.get("state") or {}).get("resolution_output", {}).get("resolution")
-        # Installed deepeval rejects golden=+metrics=. test_case=+metrics= is valid
-        # on 3.x and 4.x; CallbackHandler still records the LangGraph run.
-        assert_test(
-            test_case=LLMTestCase(
-                input=gold["shipment_id"],
-                actual_output=row["resolution"] or "",
-                expected_output=gold.get("expected_resolution") or "",
-            ),
-            metrics=[metric],
-            run_async=False,
-        )
-        row["deepeval_score"] = getattr(metric, "score", None)
-        row["deepeval_success"] = bool(getattr(metric, "success", False))
-        row["deepeval_reason"] = (getattr(metric, "reason", None) or "")[:800]
-        row["passed"] = bool(row["deepeval_success"]) and bool(row["task_complete"])
+        metric_error = None
+        try:
+            assert_test(
+                test_case=LLMTestCase(
+                    input=judge_input(gold),
+                    actual_output=judge_actual(pred),
+                    expected_output=judge_expected(gold),
+                ),
+                metrics=[metric],
+                run_async=False,
+            )
+        except AssertionError as exc:
+            metric_error = str(exc)
+        apply_metric_fields(row, metric, error=metric_error)
     except Exception as exc:
         row["error"] = str(exc)[:800]
+        row["passed"] = bool(row.get("task_complete"))
         raise
     finally:
         _LIVE_ROWS.append(row)

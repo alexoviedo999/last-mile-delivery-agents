@@ -45,7 +45,7 @@ st.markdown(
 <div class="hero">
   <h1>Last-mile DeepEval trajectory results</h1>
   <p>CI reader. Not the operator console — it does not run the graph.
-  Gold equality still ships on the live Space. These rows are the ordered-run scores.</p>
+  Gold passed is task-complete vs ground_truth.csv. DeepEval is advisory.</p>
 </div>
 """,
     unsafe_allow_html=True,
@@ -84,9 +84,12 @@ report, source = fetch_report()
 c1, c2, c3, c4 = st.columns(4)
 shipments = report.get("shipments") or []
 c1.metric("Shipments", report.get("total") if report.get("total") is not None else len(shipments))
-c2.metric("Passed", report.get("passed") if report.get("passed") is not None else "—")
-c3.metric("Generated", report.get("generated_at") or "never")
-c4.metric("Source", report.get("source") or "none")
+c2.metric("Gold passed", report.get("passed") if report.get("passed") is not None else "—")
+c3.metric(
+    "DeepEval passed",
+    report.get("deepeval_passed") if report.get("deepeval_passed") is not None else "—",
+)
+c4.metric("Generated", report.get("generated_at") or "never")
 
 if source:
     st.caption(f"Loaded from `{source}`")
@@ -134,6 +137,6 @@ with st.expander("DeepEval reasons"):
         st.markdown(f"**{s.get('shipment_id')}** — {reason}")
 
 st.caption(
-    "Task complete / escalation are gold equality from the graph state. "
-    "DeepEval score is TaskCompletionMetric on the traced trajectory."
+    "Gold passed = task complete (exception + resolution + tone vs ground_truth.csv). "
+    "DeepEval is advisory TaskCompletionMetric on the run summary, not the ship gate."
 )
