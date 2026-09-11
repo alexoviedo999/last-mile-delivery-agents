@@ -139,6 +139,12 @@ def test_snapshot_script_reapplies_patch():
     assert "apply_last_mile_app_patch" in text
 
 
+def test_app_py_links_to_results_space():
+    text = find_app_py().read_text(encoding="utf-8")
+    assert "https://huggingface.co/spaces/alexoviedo999/last-mile-deepeval-results" in text
+    assert 'target="_blank"' in text
+
+
 def test_app_py_snapshot_wires_callback():
     app_py = find_app_py()
     text = app_py.read_text(encoding="utf-8")
