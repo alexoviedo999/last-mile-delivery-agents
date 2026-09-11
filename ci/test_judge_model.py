@@ -31,3 +31,6 @@ def test_assert_test_uses_llm_test_case_not_golden_plus_metrics():
     assert "assert_test(golden=golden, metrics=" not in text
     assert "LLMTestCase" in text
     assert "test_case=" in text
+    assert "judge_input" in text
+    assert "apply_metric_fields" in text
+    assert 'deepeval_success"]) and bool(row["task_complete"])' not in text

@@ -26,6 +26,7 @@ def test_write_and_load_latest(tmp_path):
                 "passed": True,
                 "task_complete": True,
                 "deepeval_score": 0.9,
+                "deepeval_success": True,
             }
         ],
         run_url="https://example.test/run/1",
@@ -35,6 +36,7 @@ def test_write_and_load_latest(tmp_path):
     loaded = load_latest(path)
     assert loaded["total"] == 1
     assert loaded["passed"] == 1
+    assert loaded["deepeval_passed"] == 1
     assert loaded["shipments"][0]["shipment_id"] == "SHP-001"
     hist = tmp_path / "history.jsonl"
     assert hist.exists()

@@ -33,6 +33,7 @@ def build_report(
     source: str = "github-actions",
 ) -> dict[str, Any]:
     passed = sum(1 for s in shipments if s.get("passed"))
+    deepeval_passed = sum(1 for s in shipments if s.get("deepeval_success"))
     n = len(shipments)
     return {
         "schema": SCHEMA,
@@ -41,6 +42,7 @@ def build_report(
         "run_url": run_url or os.environ.get("GITHUB_RUN_URL") or None,
         "note": None,
         "passed": passed,
+        "deepeval_passed": deepeval_passed,
         "total": n,
         "shipments": shipments,
     }
