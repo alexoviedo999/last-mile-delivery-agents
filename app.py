@@ -48,6 +48,8 @@ st.markdown("""
     background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%);
     color: white; padding: 20px 30px; border-radius: 10px; margin-bottom: 20px;
 }
+.main-header a.eval-link { color: #c8e6c9; text-decoration: underline; }
+.main-header a.eval-link:hover { color: #fff; }
 .badge-escalated { background:#c62828; color:white; padding:4px 12px; border-radius:20px; font-weight:bold; font-size:.85em; }
 .badge-clear     { background:#2e7d32; color:white; padding:4px 12px; border-radius:20px; font-weight:bold; font-size:.85em; }
 .trace-box { background:#f5f5f5; color:#1a1a1a; border-left:4px solid #2e7d32; padding:10px 15px; border-radius:4px; margin:6px 0; font-family:monospace; font-size:.85em; }
@@ -1223,7 +1225,8 @@ def run_pipeline(shipment_id: str) -> dict:
 st.markdown("""
 <div class="main-header">
   <h1>🚚 Last-Mile Delivery Exception Agents</h1>
-  <p>A live LangGraph multi-agent pipeline for triaging and resolving last-mile delivery exceptions</p>
+  <p>A live LangGraph multi-agent pipeline for triaging and resolving last-mile delivery exceptions
+    · <a class="eval-link" href="https://huggingface.co/spaces/alexoviedo999/last-mile-deepeval-results" target="_blank" rel="noopener noreferrer">CI DeepEval results</a></p>
 </div>
 """, unsafe_allow_html=True)
 
@@ -1240,6 +1243,10 @@ with st.sidebar:
         "Pick one of the 10 curated shipment scenarios below and run the pipeline to "
         "see the full decision trail: tool calls, agent reasoning, escalation triggers, "
         "the resolution decision, and the generated customer message."
+    )
+    st.markdown(
+        "[CI DeepEval results](https://huggingface.co/spaces/alexoviedo999/last-mile-deepeval-results) "
+        "— gold equality and trajectory scores. That Space does not run this graph."
     )
     st.divider()
     st.caption(
