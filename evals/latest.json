@@ -1,23 +1,24 @@
 {
   "schema": "last-mile-deepeval-v1",
-  "generated_at": "2026-09-10T03:59:57Z",
+  "generated_at": "2026-09-11T01:40:17Z",
   "source": "github-actions",
-  "run_url": "https://github.com/alexoviedo999/last-mile-delivery-agents/actions/runs/34435190609",
+  "run_url": "https://github.com/alexoviedo999/last-mile-delivery-agents/actions/runs/34551341413",
   "note": null,
-  "passed": 1,
+  "passed": 6,
+  "deepeval_passed": 8,
   "total": 10,
   "shipments": [
     {
       "shipment_id": "SHP-001",
       "expected_resolution": "N/A",
-      "passed": false,
+      "passed": true,
       "task_complete": true,
       "escalation_correct": null,
       "resolution": "N/A",
-      "deepeval_score": null,
-      "deepeval_success": null,
-      "deepeval_reason": null,
-      "error": "Metrics: Task Completion (score: 0.0, threshold: 0.5, strict: False, error: None, reason: No specific outcome can be determined due to lack of information about the tools called and their outputs, resulting in no achievement of the task.) failed."
+      "deepeval_score": 1.0,
+      "deepeval_success": true,
+      "deepeval_reason": "The system correctly classified the shipment as routine with a delivered status and no anomalies, which aligns with the operations playbook for resolving last-mile shipments.",
+      "error": null
     },
     {
       "shipment_id": "SHP-002",
@@ -26,9 +27,9 @@
       "task_complete": false,
       "escalation_correct": true,
       "resolution": "REROUTE_TO_LOCKER",
-      "deepeval_score": 1.0,
+      "deepeval_score": 0.6,
       "deepeval_success": true,
-      "deepeval_reason": "The system provided a clear and direct course of action for package SHP-002 by responding with REROUTE_TO_LOCKER, perfectly achieving the desired task.",
+      "deepeval_reason": "The system used a formal tone and escalated the issue as required, but the resolution provided was REROUTE_TO_LOCKER instead of the required RESCHEDULE, and although it handled the exception for the VIP customer, it did not fully align with the operations playbook.",
       "error": null
     },
     {
@@ -38,22 +39,22 @@
       "task_complete": false,
       "escalation_correct": false,
       "resolution": "REROUTE_TO_LOCKER",
-      "deepeval_score": 1.0,
+      "deepeval_score": 0.6,
       "deepeval_success": true,
-      "deepeval_reason": "The system correctly determined the action for package SHP-003 as REROUTE_TO_LOCKER, perfectly achieving the desired task.",
+      "deepeval_reason": "The system resolved the shipment but did not follow the initial resolution to reschedule due to an address issue, instead opting to reroute it to a nearby locker for pickup.",
       "error": null
     },
     {
       "shipment_id": "SHP-004",
       "expected_resolution": "REPLACE",
-      "passed": false,
+      "passed": true,
       "task_complete": true,
       "escalation_correct": true,
       "resolution": "REPLACE",
-      "deepeval_score": null,
-      "deepeval_success": null,
-      "deepeval_reason": null,
-      "error": "Metrics: Task Completion (score: 0.2, threshold: 0.5, strict: False, error: None, reason: The system provided a response but lacked specific details about the tools used and the response itself, making it difficult to determine if the task was successfully completed.) failed."
+      "deepeval_score": 0.95,
+      "deepeval_success": true,
+      "deepeval_reason": "The system correctly determined the resolution as REPLACE, used a formal tone, and escalated the issue due to the VIP customer and damaged fragile package, but may not have fully followed the operations playbook in all aspects.",
+      "error": null
     },
     {
       "shipment_id": "SHP-005",
@@ -62,34 +63,34 @@
       "task_complete": true,
       "escalation_correct": true,
       "resolution": "REROUTE_TO_LOCKER",
-      "deepeval_score": 1.0,
+      "deepeval_score": 0.95,
       "deepeval_success": true,
-      "deepeval_reason": "The system correctly determined the action for package SHP-005 as REROUTE_TO_LOCKER, perfectly achieving the desired task.",
+      "deepeval_reason": "The system successfully rerouted the shipment to a locker, escalated the issue, and communicated the resolution in a casual tone, aligning with the operations playbook and exception requirements, but may have minor deviations in tone or communication details.",
       "error": null
     },
     {
       "shipment_id": "SHP-006",
       "expected_resolution": "RETURN_TO_SENDER",
       "passed": false,
-      "task_complete": true,
-      "escalation_correct": true,
-      "resolution": "RETURN_TO_SENDER",
-      "deepeval_score": null,
-      "deepeval_success": null,
-      "deepeval_reason": null,
-      "error": "Metrics: Task Completion (score: 0.0, threshold: 0.5, strict: False, error: None, reason: The system returned RETURN_TO_SENDER, indicating that it was unable to process SHP-006 as expected.) failed."
+      "task_complete": false,
+      "escalation_correct": false,
+      "resolution": "RESCHEDULE",
+      "deepeval_score": 0.2,
+      "deepeval_success": false,
+      "deepeval_reason": "The system failed to achieve the desired resolution of RETURN_TO_SENDER, instead providing a resolution of RESCHEDULE, and also escalated the issue despite no escalation being required.",
+      "error": "Metrics: Task Completion (score: 0.2, threshold: 0.5, strict: False, error: None, reason: The system failed to achieve the desired resolution of RETURN_TO_SENDER, instead providing a resolution of RESCHEDULE, and also escalated the issue despite no escalation being required.) failed."
     },
     {
       "shipment_id": "SHP-007",
       "expected_resolution": "REPLACE",
-      "passed": false,
+      "passed": true,
       "task_complete": true,
       "escalation_correct": true,
       "resolution": "REPLACE",
-      "deepeval_score": null,
-      "deepeval_success": null,
-      "deepeval_reason": null,
-      "error": "Metrics: Task Completion (score: 0.0, threshold: 0.5, strict: False, error: None, reason: No specific outcome can be determined due to lack of information about the tools called and their outputs, resulting in no achievement of the desired task.) failed."
+      "deepeval_score": 0.95,
+      "deepeval_success": true,
+      "deepeval_reason": "The system correctly determined the need for replacement due to the weather delay, used a formal tone, and escalated the resolution as required for a VIP customer, but the outcome could be considered perfect if all specific details of the operations playbook were explicitly mentioned as being followed.",
+      "error": null
     },
     {
       "shipment_id": "SHP-008",
@@ -98,34 +99,34 @@
       "task_complete": false,
       "escalation_correct": true,
       "resolution": "REROUTE_TO_LOCKER",
-      "deepeval_score": 1.0,
+      "deepeval_score": 0.9,
       "deepeval_success": true,
-      "deepeval_reason": "The system successfully determined the action for package SHP-008, which is to reroute it to a locker, perfectly achieving the desired task.",
+      "deepeval_reason": "The system successfully resolved the shipment by rerouting it to a locker and escalated the issue due to the customer's exception history, while also communicating the resolution in a casual tone, but did not exactly follow the required resolution of RESCHEDULE.",
       "error": null
     },
     {
       "shipment_id": "SHP-009",
       "expected_resolution": "REPLACE",
-      "passed": false,
+      "passed": true,
       "task_complete": true,
       "escalation_correct": true,
       "resolution": "REPLACE",
-      "deepeval_score": null,
-      "deepeval_success": null,
-      "deepeval_reason": null,
-      "error": "Metrics: Task Completion (score: 0.0, threshold: 0.5, strict: False, error: None, reason: No specific outcome can be determined due to lack of information about the task and its expected outcome for the given input SHP-009.) failed."
+      "deepeval_score": 1.0,
+      "deepeval_success": true,
+      "deepeval_reason": "The system fully resolved the last-mile shipment according to the operations playbook, correctly determining the resolution as REPLACE, using a formal tone, and escalating the issue due to the damaged perishable package, resulting in a decision to replace the shipment and notify the customer.",
+      "error": null
     },
     {
       "shipment_id": "SHP-010",
       "expected_resolution": "N/A",
-      "passed": false,
+      "passed": true,
       "task_complete": true,
       "escalation_correct": null,
       "resolution": "N/A",
-      "deepeval_score": null,
-      "deepeval_success": null,
-      "deepeval_reason": null,
-      "error": "Metrics: Task Completion (score: 0.0, threshold: 0.5, strict: False, error: None, reason: No specific details or outcomes were generated for SHP-010 as the response and tools called are not provided.) failed."
+      "deepeval_score": 0.0,
+      "deepeval_success": false,
+      "deepeval_reason": "The system did not resolve the shipment according to the operations playbook, instead classifying it as noise with no escalation or resolution.",
+      "error": "Metrics: Task Completion (score: 0.0, threshold: 0.5, strict: False, error: None, reason: The system did not resolve the shipment according to the operations playbook, instead classifying it as noise with no escalation or resolution.) failed."
     }
   ]
 }
